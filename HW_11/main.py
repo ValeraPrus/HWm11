@@ -14,6 +14,8 @@ class Field:
 
     @value.setter
     def value(self, value):
+        if not self.is_valid(value):
+            raise ValueError
         self.__value = value
 
     def is_valid(self, value):
