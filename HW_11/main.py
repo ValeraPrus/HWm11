@@ -4,15 +4,20 @@ from datetime import datetime
 
 class Field:
     def __init__(self, value):
-        self._value = value
+        if not self.is_valid(value):
+            raise ValueError
+        self.__value = value
 
     @property
     def value(self):
-        return self._value
+        return self.__value
 
     @value.setter
-    def value(self, new_value):
-        self._value = new_value
+    def value(self, value):
+        self.__value = value
+
+    def is_valid(self, value):
+        return True
 
     def __str__(self):
         return str(self.value)
@@ -23,38 +28,20 @@ class Name(Field):
 
 
 class Phone(Field):
-    def __init__(self, value):
-        if isinstance(value, str) and value.isdigit() and len(value) == 10:
-            super().__init__(value)
-        else:
-            raise ValueError
-
-    @Field.value.setter
-    def value(self, new_value):
+    def is_valid(self, new_value):
         if isinstance(new_value, str) and new_value.isdigit() and len(new_value) == 10:
-            self._value = new_value
+            return True
         else:
-            raise ValueError
+            return False
 
 
 class Birthday(Field):
-    def __init__(self, value):
-        if not self.check_date(value):
-            raise ValueError
-        super().__init__(value)
-
-    def check_date(self, date):
+    def is_valid(self, date):
         try:
             datetime.strptime(date, "%Y-%m-%d")
             return True
         except ValueError:
             return False
-
-    @Field.value.setter
-    def value(self, new_value):
-        if not self.check_date(new_value):
-            raise ValueError
-        self._value = new_value
 
 
 class Record:
